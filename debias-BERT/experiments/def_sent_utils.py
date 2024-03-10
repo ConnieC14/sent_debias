@@ -19,7 +19,8 @@ words3 = [
     ["judaism", "christianity", "islam"],
 ]
 
-DIRECTORY = '../text_corpus/'
+# DIRECTORY = '../text_corpus/'
+DIRECTORY = '/content/sent_debias/debias-BERT/text_corpus/'
 
 GENDER = 0
 RACE = 1
