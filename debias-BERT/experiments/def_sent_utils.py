@@ -21,6 +21,7 @@ words3 = [
 
 # DIRECTORY = '../text_corpus/'
 DIRECTORY = '/content/sent_debias/debias-BERT/text_corpus/'
+# DIRECTORY = '/Users/Connie/Documents/sandbox/sent_debias/debias-BERT/text_corpus/'
 
 GENDER = 0
 RACE = 1
