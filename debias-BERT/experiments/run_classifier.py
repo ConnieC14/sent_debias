@@ -47,7 +47,7 @@ from pytorch_pretrained_bert.optimization import BertAdam, WarmupLinearSchedule
 from def_sent_utils import get_def_pairs
 from eval_utils import isInSet
 from my_debiaswe import my_we
-
+from pca import PCA_
 logger = logging.getLogger(__name__)
 
 class InputExample(object):
@@ -320,7 +320,12 @@ def extract_embeddings_pair(bert_encoder, tokenizer, examples, max_seq_length, d
 
 def doPCA(matrix, num_components=10):
 	pca = PCA(n_components=num_components, svd_solver="auto")
+	pca_, feat_vect = PCA_(n_components=num_components)
+	
 	pca.fit(matrix) # Produce different results each time...
+	pca_.fit(matrix)
+	
+	print(pca_, pca)
 	return pca
 
 
