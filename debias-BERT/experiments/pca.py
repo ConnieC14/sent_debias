@@ -24,14 +24,14 @@ class PCA_():
             signs = np.sign(u[max_abs_cols, range(u.shape[1])])
             u = u * signs
             Vt *= signs[:, np.newaxis]
-            
+
             Vt = Vt[:self.n_components].T
-            
+            # Do not whiten
             project_X = u[:, :self.n_components]
             # proj_X = X * V = U * S * Vt * V = U * S
             project_X = project_X * s[: self.n_components]
             self.projected_data = project_X
-            
+
             components_ = Vt.T
             self.components_ = components_
         else:

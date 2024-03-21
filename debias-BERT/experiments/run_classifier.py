@@ -222,9 +222,10 @@ class BertEncoder(object):
 
 	def encode(self, input_ids, token_type_ids=None, attention_mask=None, word_level=False):
 		self.bert.eval()
-		embeddings = self.bert(input_ids, token_type_ids=token_type_ids, 
-			attention_mask=attention_mask, word_level=word_level, 
-			remove_bias=False, bias_dir=None, encode_only=True)
+		with torch.no_grad():
+			embeddings = self.bert(input_ids, token_type_ids=token_type_ids, 
+				attention_mask=attention_mask, word_level=word_level, 
+				remove_bias=False, bias_dir=None, encode_only=True)
 		return embeddings
 
 
@@ -238,7 +239,7 @@ def extract_embeddings(bert_encoder, tokenizer, examples, max_seq_length, device
 	all_segments_a = torch.tensor([f.segments_a for f in features], dtype=torch.long)
 
 	data = TensorDataset(all_inputs_a, all_mask_a, all_segments_a)
-	dataloader = DataLoader(data, batch_size=32, shuffle=False)
+	dataloader = DataLoader(data, batch_size=16, shuffle=False)
 	all_embeddings = []
 	for step, batch in enumerate(tqdm(dataloader)):
 		inputs_a, mask_a, segments_a = batch
@@ -278,7 +279,7 @@ def extract_embeddings_pair(bert_encoder, tokenizer, examples, max_seq_length, d
 		all_segments_b = torch.tensor([f.segments_b for f in features], dtype=torch.long)
 
 		data = TensorDataset(all_inputs_a, all_inputs_b, all_mask_a, all_mask_b, all_segments_a, all_segments_b)
-		dataloader = DataLoader(data, batch_size=32, shuffle=False)
+		dataloader = DataLoader(data, batch_size=16, shuffle=False)
 		all_embeddings_a = []
 		all_embeddings_b = []
 		for step, batch in enumerate(tqdm(dataloader)):
@@ -290,9 +291,10 @@ def extract_embeddings_pair(bert_encoder, tokenizer, examples, max_seq_length, d
 				inputs_b = inputs_b.to(device)
 				mask_b = mask_b.to(device)
 				segments_b = segments_b.to(device)
+			print("Running bert encoder")
 			embeddings_a = bert_encoder.encode(input_ids=inputs_a, token_type_ids=segments_a, attention_mask=mask_a, word_level=False)
 			embeddings_b = bert_encoder.encode(input_ids=inputs_b, token_type_ids=segments_b, attention_mask=mask_b, word_level=False)
-
+			
 			embeddings_a /= torch.norm(embeddings_a, dim=-1, keepdim=True)
 			embeddings_b /= torch.norm(embeddings_b, dim=-1, keepdim=True)
 			if not torch.isnan(embeddings_a).any() and not torch.isnan(embeddings_b).any():
@@ -319,13 +321,13 @@ def extract_embeddings_pair(bert_encoder, tokenizer, examples, max_seq_length, d
 
 
 def doPCA(matrix, num_components=10):
-	# pca = PCA(n_components=num_components, svd_solver="auto")
-	pca_ = PCA_(n_components=num_components)
+	pca = PCA(n_components=num_components, svd_solver="auto")
+	# pca_ = PCA_(n_components=num_components)
 	
-	# pca.fit(matrix) # Produce different results each time...
-	pca_.fit(matrix)
+	pca.fit(matrix) # Produce different results each time...
+	# pca_.fit(matrix)
 	
-	return pca_
+	return pca
 
 
 def get_def_examples(def_pairs):
