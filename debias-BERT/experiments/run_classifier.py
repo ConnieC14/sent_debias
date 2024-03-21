@@ -319,14 +319,13 @@ def extract_embeddings_pair(bert_encoder, tokenizer, examples, max_seq_length, d
 
 
 def doPCA(matrix, num_components=10):
-	pca = PCA(n_components=num_components, svd_solver="auto")
-	pca_, feat_vect = PCA_(n_components=num_components)
+	# pca = PCA(n_components=num_components, svd_solver="auto")
+	pca_ = PCA_(n_components=num_components)
 	
-	pca.fit(matrix) # Produce different results each time...
+	# pca.fit(matrix) # Produce different results each time...
 	pca_.fit(matrix)
 	
-	print(pca_, pca)
-	return pca
+	return pca_
 
 
 def get_def_examples(def_pairs):
